@@ -47,7 +47,7 @@ public class Account {
         this.updatedDt = now;
     }
 
-    @PrePersist
+    @PreUpdate
     protected void onUpdate() {
         this.updatedDt = LocalDateTime.now();
     }
