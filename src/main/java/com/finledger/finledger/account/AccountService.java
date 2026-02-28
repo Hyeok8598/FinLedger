@@ -1,9 +1,11 @@
 package com.finledger.finledger.account;
 
 import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+@Service
 public class AccountService {
     private final AccountRepository accountRepository;
 
@@ -11,8 +13,9 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
+    // id 채번 로직을 넣어야함.
     @Transactional
-    public void CreateAccount(String custNm, BigDecimal balance) {
+    public void createAccount(String custNm, BigDecimal balance) {
         Account account = new Account(custNm, balance);
     }
 
