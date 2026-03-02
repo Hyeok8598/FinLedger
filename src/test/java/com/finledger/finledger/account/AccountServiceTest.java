@@ -15,8 +15,10 @@ public class AccountServiceTest extends BaseIntegrationTest {
 
     @Test
     void deposit_usecase_increases_balance() {
-        accountService.createAccount("아무개", new BigDecimal("0"));;
+        Long accountId = accountService.createAccount("아무개", new BigDecimal("0"));;
 
-//        accountService.deposit();
+        Account account = accountService.deposit(accountId, new BigDecimal("500"));
+
+        assertThat(account.getBalance()).isEqualByComparingTo("500");
     }
 }

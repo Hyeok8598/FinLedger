@@ -13,15 +13,19 @@ public class AccountService {
         this.accountRepository = accountRepository;
     }
 
-    // id 채번 로직을 넣어야함.
     @Transactional
-    public void createAccount(String custNm, BigDecimal balance) {
+    public Long createAccount(String custNm, BigDecimal balance) {
         Account account = new Account(custNm, balance);
+        Account saved   = this.accountRepository.save(account);
+        return saved.getId();
     }
 
     @Transactional
-    public void deposit(Long accountId, BigDecimal amount) {
+    public Account deposit(Long accountId, BigDecimal amount) {
         Account account = getAccount(accountId);
+        account.deposit(amount);
+
+        return account;
     }
 
     @Transactional

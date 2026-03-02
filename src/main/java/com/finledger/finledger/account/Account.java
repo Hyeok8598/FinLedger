@@ -17,6 +17,10 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /* 추후 개발 예정(채번로직) */
+    @Column(nullable = true, unique = true, length = 32)
+    private String accountNumber;
+
     @Column(nullable = false, length = 100)
     private String custNm;
 
@@ -74,7 +78,7 @@ public class Account {
     }
 
     private void validateAmount(BigDecimal amount) {
-        if(amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+        if(amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("금액은 0보다 커야 합니다.");
         }
     }
