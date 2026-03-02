@@ -11,14 +11,28 @@ public class AccountServiceTest extends BaseIntegrationTest {
 
     @Autowired
     AccountService accountService;
-    AccountRepository accountRepository;
 
     @Test
     void deposit_usecase_increases_balance() {
         Long accountId = accountService.createAccount("아무개", new BigDecimal("0"));;
 
-        Account account = accountService.deposit(accountId, new BigDecimal("500"));
+        accountService.deposit(accountId, new BigDecimal("500"));
 
-        assertThat(account.getBalance()).isEqualByComparingTo("500");
+        // DB에 저장된 Account 최종 조회
+        BigDecimal balance = accountService.getBalance(accountId);
+        assertThat(balance).isEqualByComparingTo("500");
+    }
+
+    @Test
+    void withdraw_usecase_decrease_balacne() {
+        Long accountId = accountService.createAccount("김아무개", new BigDecimal(0));
+
+        accountService.deposit(accountId, new BigDecimal("500"));
+        accountService.withdraw(accountId, new BigDecimal("500"));
+
+        // DB에 저장된 Account 최종 조회
+        BigDecimal balance = accountService.getBalance(accountId);
+
+        assertThat(balance).isEqualByComparingTo("0");
     }
 }

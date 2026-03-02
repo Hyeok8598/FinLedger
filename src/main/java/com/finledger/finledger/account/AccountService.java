@@ -34,8 +34,13 @@ public class AccountService {
         account.withdraw(amount);
     }
 
+    @Transactional
+    public BigDecimal getBalance(Long accountId) {
+        return this.getAccount(accountId).getBalance();
+    }
+
     private Account getAccount(Long id) {
         return accountRepository.findById(id)
-            .orElseThrow(() -> new IllegalArgumentException("계좌가 존재하지 않습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("계좌가 존재하지 않습니다."));
     }
 }
