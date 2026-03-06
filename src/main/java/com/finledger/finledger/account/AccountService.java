@@ -8,15 +8,20 @@ import java.math.BigDecimal;
 @Service
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final AccountNumberGenerator accountNumberGenerator;
 
-    public AccountService(AccountRepository accountRepository) {
+    public AccountService(AccountRepository accountRepository, AccountNumberGenerator accountNumberGenerator) {
         this.accountRepository = accountRepository;
+        this.accountNumberGenerator = accountNumberGenerator;
     }
 
     @Transactional
     public Long createAccount(String custNm, BigDecimal balance) {
         Account account = new Account(custNm, balance);
         Account saved   = this.accountRepository.save(account);
+        String accountNumber = accountNumberGenerator.generate(saved.getId());
+        saved.assignAccountNumber(accountNumber);
+
         return saved.getId();
     }
 
@@ -37,6 +42,11 @@ public class AccountService {
     @Transactional
     public BigDecimal getBalance(Long accountId) {
         return this.getAccount(accountId).getBalance();
+    }
+
+    @Transactional
+    public String getAccountNumber(Long AccountId) {
+        return this.getAccount(AccountId).getAccountNumber();
     }
 
     private Account getAccount(Long id) {

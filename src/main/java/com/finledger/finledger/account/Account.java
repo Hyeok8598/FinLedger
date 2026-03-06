@@ -71,6 +71,18 @@ public class Account {
         this.balance = this.balance.subtract(amount);
     }
 
+    public void assignAccountNumber(String accountNumber) {
+        if(this.accountNumber != null) {
+            throw new IllegalStateException("계좌번호는 이미 할당되었습니다.");
+        }
+
+        if(accountNumber == null || accountNumber.isBlank()) {
+            throw new IllegalArgumentException("계좌번호는 필수입니다.");
+        }
+
+        this.accountNumber = accountNumber;
+    }
+
     private void validateCustNm(String custNm) {
         if(custNm == null || custNm.isBlank()) {
             throw new IllegalArgumentException("고객명은 필수입니다.");

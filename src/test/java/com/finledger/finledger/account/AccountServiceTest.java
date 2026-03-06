@@ -35,4 +35,14 @@ public class AccountServiceTest extends BaseIntegrationTest {
 
         assertThat(balance).isEqualByComparingTo("0");
     }
+
+    @Test
+    void create_account_assigns_account_number() {
+        Long accountId = accountService.createAccount("임아무개", new BigDecimal("1000"));
+
+        String accountNumber = accountService.getAccountNumber(accountId);
+
+        assertThat(accountNumber).isNotBlank();
+        assertThat(accountNumber).startsWith("ACC");
+    }
 }
