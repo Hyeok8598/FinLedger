@@ -1,8 +1,10 @@
 # FinLedger
+
 Backend architecture study project implementing a concurrency-safe banking transfer system
 Spring Boot 기반 동시성(Concurrency)을 고려한 금융 이체 시스템 구현 프로젝트
 
 📌 프로젝트 소개
+
 FinLedger는 금융 시스템에 가장 중요한 이체 기능을 중심으로 동시 요청 환경에서도 데이터 정합성을 보장하는 백엔드 시스템을 구현하는 프로젝트이다.
 
 - 트랜잭션 경계 설정
