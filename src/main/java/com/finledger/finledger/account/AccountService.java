@@ -45,12 +45,22 @@ public class AccountService {
     }
 
     @Transactional
-    public String getAccountNumber(Long AccountId) {
-        return this.getAccount(AccountId).getAccountNumber();
+    public String getAccountNumber(Long accountId) {
+        return this.getAccount(accountId).getAccountNumber();
+    }
+
+    @Transactional
+    public BigDecimal getBalance(String accountNumber) {
+        return this.getAccountByAccountNumber(accountNumber).getBalance();
     }
 
     private Account getAccount(Long id) {
         return accountRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("계좌가 존재하지 않습니다."));
+    }
+
+    private Account getAccountByAccountNumber(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber)
                 .orElseThrow(() -> new IllegalArgumentException("계좌가 존재하지 않습니다."));
     }
 }
