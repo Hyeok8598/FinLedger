@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.swing.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -58,6 +59,11 @@ public class Account {
 
     public void deposit(BigDecimal amount) {
         validateAmount(amount);
+
+        if(amount.compareTo(BigDecimal.ZERO) == 0) {
+            throw new IllegalStateException("입금금액 0원");
+        }
+
         this.balance = this.balance.add(amount);
     }
 
