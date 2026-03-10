@@ -2,16 +2,26 @@ package com.finledger.finledger.account;
 
 import static org.assertj.core.api.Assertions.*;
 import com.finledger.finledger.support.BaseIntegrationTest;
+import com.finledger.finledger.transfer.Transaction;
+import com.finledger.finledger.transfer.TransactionRepository;
+import com.finledger.finledger.transfer.TransactionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class AccountServiceTransferTest extends BaseIntegrationTest {
 
     @Autowired
     private AccountService accountService;
+
+    @Autowired
+    private TransactionService transactionService;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
 
     @Test
     @DisplayName("계좌 이체가 정상적으로 수행된다")
@@ -58,5 +68,16 @@ public class AccountServiceTransferTest extends BaseIntegrationTest {
         assertThatThrownBy(() ->
                 accountService.transfer(fromID, toID, BigDecimal.ZERO)
         ).isInstanceOf(IllegalArgumentException.class).hasMessage("이체 금액은 0보다 커야 합니다.");
+    }
+
+    @Test
+    @DisplayName("이체하면 거래내역이 2건 생성된다")
+    void create_usecase_two_transaction_when_transfer() {
+        Long fromId = accountService.createAccount("출금고객", new BigDecimal("1000"));
+        Long toId   = accountService.createAccount("입금고객", new BigDecimal("5000"));
+
+        accountService.transfer(fromId, toId, new BigDecimal("500"));
+        List<Transaction> transactions = transactionRepository.findAll();
+        assertThat(transactions).hasSize(2);
     }
 }
