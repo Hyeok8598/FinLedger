@@ -1,4 +1,4 @@
-package com.finledger.finledger.transfer;
+package com.finledger.finledger.transaction;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

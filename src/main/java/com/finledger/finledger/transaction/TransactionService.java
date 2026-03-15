@@ -1,4 +1,4 @@
-package com.finledger.finledger.transfer;
+package com.finledger.finledger.transaction;
 
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
