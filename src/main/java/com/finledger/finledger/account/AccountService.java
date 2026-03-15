@@ -1,5 +1,6 @@
 package com.finledger.finledger.account;
 
+import com.finledger.finledger.transfer.TransactionService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
@@ -9,10 +10,13 @@ import java.math.BigDecimal;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final AccountNumberGenerator accountNumberGenerator;
+    private final TransactionService transactionService;
 
-    public AccountService(AccountRepository accountRepository, AccountNumberGenerator accountNumberGenerator) {
+    public AccountService(AccountRepository accountRepository, AccountNumberGenerator accountNumberGenerator, TransactionService transactionService) {
         this.accountRepository = accountRepository;
         this.accountNumberGenerator = accountNumberGenerator;
+        this.transactionService = transactionService;
+
     }
 
     @Transactional
@@ -70,6 +74,8 @@ public class AccountService {
 
         fromAccount.withdraw(amount);
         toAccount.deposit(amount);
+
+        transactionService.recordTransfer(fromId, toId, amount);
     }
 
     private Account getAccount(Long id) {
