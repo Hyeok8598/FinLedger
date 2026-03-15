@@ -1,5 +1,7 @@
 package com.finledger.finledger.account;
 
+import com.finledger.finledger.account.exception.AccountErrorLabel;
+import com.finledger.finledger.account.exception.AccountException;
 import com.finledger.finledger.support.BaseIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,17 +48,27 @@ public class AccountServiceTest extends BaseIntegrationTest {
 
         assertThatThrownBy(() ->
                 accountService.withdraw(accountId, new BigDecimal("2000"))
-        ).isInstanceOf(IllegalStateException.class).hasMessageContaining("잔액");
+        )
+                .isInstanceOf(AccountException.class)
+                .satisfies(ex ->{
+                   AccountException ae = (AccountException) ex;
+                   assertThat(ae.getErrorCode()).isEqualTo(AccountErrorLabel.INSUFFICIENT_BALANCE);
+                });
     }
 
     @DisplayName("0원 이하 금액은 입금할 수 없다.")
     @Test
     void deposit_usecase_rejects_zero_or_negative_amount() {
-        Long accountId = accountService.createAccount("박아무개", BigDecimal.ZERO);
+        Long accountId = accountService.createAccount("박아무개", new BigDecimal("1000"));
 
         assertThatThrownBy(()->
                 accountService.deposit(accountId, BigDecimal.ZERO)
-        ).isInstanceOf(IllegalStateException.class);
+        )
+                .isInstanceOf(AccountException.class)
+                .satisfies(ex -> {
+                   AccountException ae = (AccountException) ex;
+                   assertThat(ae.getErrorCode()).isEqualTo(AccountErrorLabel.INVALID_AMOUNT);
+                });
     }
 
     @DisplayName("존재하지 않는 계좌 조회 시 예외가 발생한다")
@@ -64,7 +76,12 @@ public class AccountServiceTest extends BaseIntegrationTest {
     void get_balance_throws_exception_when_account_not_found() {
         assertThatThrownBy(() ->
             accountService.getBalance(999L)
-        ).isInstanceOf(IllegalArgumentException.class).hasMessageContaining("계좌");
+        )
+                .isInstanceOf(AccountException.class)
+                .satisfies(ex -> {
+                    AccountException ae = (AccountException) ex;
+                    assertThat(ae.getErrorCode()).isEqualTo(AccountErrorLabel.ACCOUNT_NOT_FOUNT);
+                });
     }
 
     @DisplayName("계좌 생성 시, 계좌번호가 자동으로 채번된다")

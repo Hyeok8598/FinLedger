@@ -1,5 +1,7 @@
 package com.finledger.finledger.account;
 
+import com.finledger.finledger.account.exception.AccountErrorLabel;
+import com.finledger.finledger.account.exception.AccountException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -39,7 +41,7 @@ public class Account {
 
     public Account(String custNm, BigDecimal balance) {
         validateCustNm(custNm);
-        validateAmount(balance);
+        validateInitAmount(balance);
 
         this.custNm = custNm;
         this.balance = balance;
@@ -59,11 +61,6 @@ public class Account {
 
     public void deposit(BigDecimal amount) {
         validateAmount(amount);
-
-        if(amount.compareTo(BigDecimal.ZERO) == 0) {
-            throw new IllegalStateException("입금금액 0원");
-        }
-
         this.balance = this.balance.add(amount);
     }
 
@@ -71,7 +68,7 @@ public class Account {
         validateAmount(amount);
 
         if(this.balance.compareTo(amount) < 0) {
-            throw new IllegalStateException("잔액 부족");
+            throw new AccountException(AccountErrorLabel.INSUFFICIENT_BALANCE);
         }
 
         this.balance = this.balance.subtract(amount);
@@ -79,11 +76,11 @@ public class Account {
 
     public void assignAccountNumber(String accountNumber) {
         if(this.accountNumber != null) {
-            throw new IllegalStateException("계좌번호는 이미 할당되었습니다.");
+            throw new AccountException(AccountErrorLabel.ACCOUNT_NUMBER_ALREADY_ASSIGNED);
         }
 
         if(accountNumber == null || accountNumber.isBlank()) {
-            throw new IllegalArgumentException("계좌번호는 필수입니다.");
+            throw new AccountException(AccountErrorLabel.ACCOUNT_NUMBER_REQUIRED);
         }
 
         this.accountNumber = accountNumber;
@@ -91,13 +88,19 @@ public class Account {
 
     private void validateCustNm(String custNm) {
         if(custNm == null || custNm.isBlank()) {
-            throw new IllegalArgumentException("고객명은 필수입니다.");
+            throw new AccountException(AccountErrorLabel.CUSTOMER_NAME_REQUIRED);
         }
     }
 
     private void validateAmount(BigDecimal amount) {
+        if(amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new AccountException(AccountErrorLabel.INVALID_AMOUNT);
+        }
+    }
+
+    private void validateInitAmount(BigDecimal amount) {
         if(amount == null || amount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("금액은 0보다 커야 합니다.");
+            throw new AccountException(AccountErrorLabel.INVALID_AMOUNT);
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.finledger.finledger.account;
 
+import com.finledger.finledger.account.exception.AccountErrorLabel;
+import com.finledger.finledger.account.exception.AccountException;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
@@ -9,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 public class AccountNumberGenerator {
     public String generate(Long id) {
         if(id == null) {
-            throw new IllegalArgumentException("계좌번호 생성용 ID는 필수입니다.");
+            throw new AccountException(AccountErrorLabel.ACCOUNT_ID_REQUIRED);
         }
 
         /* ID 값 생성 후, ACC + yyyyMMdd + id(000000) */

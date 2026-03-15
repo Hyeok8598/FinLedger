@@ -1,6 +1,9 @@
 package com.finledger.finledger.account;
 
 import static org.assertj.core.api.Assertions.*;
+
+import com.finledger.finledger.account.exception.AccountErrorLabel;
+import com.finledger.finledger.account.exception.AccountException;
 import com.finledger.finledger.support.BaseIntegrationTest;
 import com.finledger.finledger.transfer.Transaction;
 import com.finledger.finledger.transfer.TransactionRepository;
@@ -45,7 +48,12 @@ public class AccountServiceTransferTest extends BaseIntegrationTest {
 
         assertThatThrownBy(() ->
                 accountService.transfer(accountId, accountId, new BigDecimal("3000"))
-        ).isInstanceOf(IllegalArgumentException.class).hasMessage("동일 계좌로 이체할 수 없습니다.");
+        )
+                .isInstanceOf(AccountException.class)
+                .satisfies(ex -> {
+                    AccountException ae = (AccountException) ex;
+                    assertThat(ae.getErrorCode()).isEqualTo(AccountErrorLabel.SAME_ACCOUNT_TRANSFER);
+                });
     }
 
     @Test
@@ -56,7 +64,12 @@ public class AccountServiceTransferTest extends BaseIntegrationTest {
 
         assertThatThrownBy(() ->
                 accountService.transfer(fromID, toID, new BigDecimal("3000"))
-        ).isInstanceOf(IllegalStateException.class).hasMessage("잔액 부족");
+        )
+                .isInstanceOf(AccountException.class)
+                .satisfies(ex -> {
+                   AccountException ae = (AccountException) ex;
+                   assertThat(ae.getErrorCode()).isEqualTo(AccountErrorLabel.INSUFFICIENT_BALANCE);
+                });
     }
 
     @Test
@@ -67,7 +80,12 @@ public class AccountServiceTransferTest extends BaseIntegrationTest {
 
         assertThatThrownBy(() ->
                 accountService.transfer(fromID, toID, BigDecimal.ZERO)
-        ).isInstanceOf(IllegalArgumentException.class).hasMessage("이체 금액은 0보다 커야 합니다.");
+        )
+                .isInstanceOf(AccountException.class)
+                .satisfies(ex -> {
+                   AccountException ae = (AccountException) ex;
+                   assertThat(ae.getErrorCode()).isEqualTo(AccountErrorLabel.INVALID_AMOUNT);
+                });
     }
 
     @Test
