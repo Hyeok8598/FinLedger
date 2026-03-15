@@ -1,5 +1,7 @@
 package com.finledger.finledger.account;
 
+import com.finledger.finledger.account.exception.AccountErrorLabel;
+import com.finledger.finledger.account.exception.AccountException;
 import com.finledger.finledger.transaction.TransactionService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
@@ -80,30 +82,30 @@ public class AccountService {
 
     private Account getAccount(Long id) {
         return accountRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("계좌가 존재하지 않습니다."));
+                .orElseThrow(() -> new AccountException(AccountErrorLabel.ACCOUNT_NOT_FOUNT));
     }
 
     private Account getAccountByAccountNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber)
-                .orElseThrow(() -> new IllegalArgumentException("계좌가 존재하지 않습니다."));
+                .orElseThrow(() -> new AccountException(AccountErrorLabel.ACCOUNT_NOT_FOUNT));
     }
 
     private Account getAccountForUpdate(Long id) {
         return accountRepository.findByIdForUpdate(id)
-                .orElseThrow(() -> new IllegalArgumentException("계좌가 존재하지 않습니다."));
+                .orElseThrow(() -> new AccountException(AccountErrorLabel.ACCOUNT_NOT_FOUNT));
     }
 
     private void validateTransferRequest(Long fromId, Long toId, BigDecimal amount) {
         if(fromId == null || toId == null) {
-            throw new IllegalArgumentException("계좌가 존재하지 않습니다.");
+            throw new AccountException(AccountErrorLabel.ACCOUNT_NOT_FOUNT);
         }
 
         if(fromId.equals(toId)) {
-            throw new IllegalArgumentException("동일 계좌로 이체할 수 없습니다.");
+            throw new AccountException(AccountErrorLabel.SAME_ACCOUNT_TRANSFER);
         }
 
         if(amount == null || amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("이체 금액은 0보다 커야 합니다.");
+            throw new AccountException(AccountErrorLabel.INVALID_AMOUNT);
         }
     }
 }
