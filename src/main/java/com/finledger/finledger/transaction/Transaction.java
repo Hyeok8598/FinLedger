@@ -1,4 +1,4 @@
-package com.finledger.finledger.transfer;
+package com.finledger.finledger.transaction;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,6 +20,8 @@ public class Transaction {
     /* type : W:withdrar, D:deposit */
     private String type;
     private LocalDateTime createdDt;
+
+    protected Transaction() {}
 
     public Transaction(Long accountId, Long counterPartyId, BigDecimal amount, String type) {
         this.accountId = accountId;

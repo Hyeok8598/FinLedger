@@ -1,6 +1,6 @@
 package com.finledger.finledger.account;
 
-import com.finledger.finledger.transfer.TransactionService;
+import com.finledger.finledger.transaction.TransactionService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
